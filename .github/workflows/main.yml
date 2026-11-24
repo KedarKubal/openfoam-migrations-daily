@@ -11,7 +11,7 @@ jobs:
   solve:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    container: openfoam/openfoam11-paraview510
+    container: openfoam/openfoam11-paraview510:latest
     env:
       DAY: ${{ inputs.day }}
     steps:
