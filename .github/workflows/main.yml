@@ -1,0 +1,62 @@
+name: run-case
+on:
+  workflow_dispatch:
+    inputs:
+      day:
+        description: "Folder date YYYY-MM-DD"
+        required: true
+permissions:
+  contents: write
+jobs:
+  solve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    container: openfoam/openfoam11-paraview510
+    env:
+      DAY: ${{ inputs.day }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run case
+        working-directory: ${{ inputs.day }}/case
+        shell: bash
+        run: |
+          source /opt/openfoam11/etc/bashrc
+          if ./Allrun; then echo ok > ../solver_ok; fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results
+          path: |
+            ${{ inputs.day }}/case/log.*
+            ${{ inputs.day }}/case/postProcessing
+            ${{ inputs.day }}/solver_ok
+  report:
+    needs: solve
+    if: always()
+    runs-on: ubuntu-latest
+    env:
+      DAY: ${{ inputs.day }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: results
+          path: ${{ inputs.day }}
+      - name: Verify and update status
+        shell: bash
+        run: |
+          cd "$DAY"
+          if [ ! -f solver_ok ]; then
+            status=RUN_FAILED
+            { echo "Solver failed. Log tail:"; tail -n 80 case/log.* 2>/dev/null; } > ci_result.txt
+          else
+            python3 verify.py | tee ci_result.txt
+            if [ "${PIPESTATUS[0]}" -eq 0 ]; then status=VALIDATED; else status=MISMATCH; fi
+          fi
+          cd ..
+          sed -i "/^${DAY} |/ s/status=[A-Z_]*/status=${status}/" LOG.md
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$DAY/ci_result.txt" LOG.md
+          git commit -m "CI ${DAY}: ${status}" || true
+          git push
