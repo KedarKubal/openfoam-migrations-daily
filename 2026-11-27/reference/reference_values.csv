@@ -1,0 +1,4 @@
+quantity,paper_value,tolerance,source
+U_center_x,0.0,0.1,Figure 7 centerline velocity profiles (assumed near zero for antiparallel)
+U_center_y,0.0,0.1,Figure 7 
+pv_approx_x,0.5,0.15,Table 1 vortex locations (primary, antiparallel Re~100)
