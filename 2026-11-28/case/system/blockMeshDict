@@ -1,0 +1,116 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  11                                    |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+scale   1;
+
+// 2D BFS: inlet height H=0.0048, step S=0.0048, upstream L1=0.05, downstream L2=1.0
+// Origin: step corner at (0.05, 0)
+
+vertices
+(
+    (0     0.0048  0)     // 0 upstream bottom-left (top of step level)
+    (0.05  0.0048  0)     // 1 upstream bottom-right / step top
+    (0.05  0      0)     // 2 step bottom
+    (1.05  0      0)     // 3 downstream bottom-right
+    (1.05  0.0096 0)     // 4 downstream top-right
+    (0.05  0.0096 0)     // 5 downstream top-left / step top extended
+    (0     0.0096 0)     // 6 upstream top-left
+    (0     0.0048  0.001) // 7
+    (0.05  0.0048  0.001) // 8
+    (0.05  0      0.001) // 9
+    (1.05  0      0.001) // 10
+    (1.05  0.0096 0.001) // 11
+    (0.05  0.0096 0.001) // 12
+    (0     0.0096 0.001) // 13
+);
+
+blocks
+(
+    // Upstream block
+    hex (0 1 5 6 7 8 12 13) (40 20 1) simpleGrading (1 1 1)
+    // Downstream lower (after step)
+    hex (2 3 4 5 9 10 11 12) (200 40 1) simpleGrading (4 1 1)  // grading towards step
+);
+
+edges
+(
+);
+
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (0 6 13 7)
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (3 4 11 10)
+        );
+    }
+    bottomWall
+    {
+        type wall;
+        faces
+        (
+            (2 3 10 9)
+        );
+    }
+    topWall
+    {
+        type wall;
+        faces
+        (
+            (6 5 12 13)
+            (5 4 11 12)
+        );
+    }
+    stepWall
+    {
+        type wall;
+        faces
+        (
+            (1 2 9 8)
+        );
+    }
+    frontAndBack
+    {
+        type empty;
+        faces
+        (
+            (0 1 8 7)
+            (1 5 12 8)
+            (6 0 7 13)
+            (5 6 13 12)
+            (2 1 8 9)
+            (3 2 9 10)
+            (4 3 10 11)
+            (5 4 11 12)
+        );
+    }
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

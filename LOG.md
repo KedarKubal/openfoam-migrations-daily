@@ -1,2 +1,3 @@
 2026-11-26 | Numerical Investigation of Fluid In 2D and 3D Lid-Driven Cavity at Different Reynolds Numbers | ANSYS Fluent | status=UNVALIDATED | 2D Re=1000 lid-driven cavity, PV location from Table 3
 2026-11-27 | Using the Ansys Fluent for simulation of two-sided lid-driven flow in a staggered cavity | ANSYS FLUENT | status=UNVALIDATED | two-sided antiparallel lids approx, Re=100, vortex Table 1
+2026-11-28 | Numerical Study of Heat Transfer and Laminar Flow over a Backward Facing Step with and without Obstacle | ANSYS FLUENT 14 | status=UNVALIDATED | 2D laminar BFS ER=2 Re_H=100, reattachment from Erturk equiv

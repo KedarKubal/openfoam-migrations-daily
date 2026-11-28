@@ -1,0 +1,3 @@
+quantity,value,tolerance,unit,source
+reattachment_length,0.024,0.1,m,Erturk2008 equivalent Re_D=200 xr/h≈5 (h=0.0048)
+Ux_probe_near_reattach,0.02,0.1,m/s,estimated near reattachment probe
